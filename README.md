@@ -1,202 +1,254 @@
-# 🚀 Autonomous Threat Detection & Response Agent (ATD-Agent)
+# Autonomous IT Incident Triage & Remediation Agent  
+Capstone Project • Kaggle Agents Intensive  
+Track: **Business & Productivity Agents**
 
-![Project Banner](thumbnail.png)
+---
 
-## 📌 Project Overview
+<p align="center">
+  <img src="/thumbnail.png" width="560" height="280"/>
+</p>
 
-The **Autonomous Threat Detection & Response Agent (ATD-Agent)** is an AI-driven security automation system designed for small labs, homelabs, and enterprise testbeds. The project empowers security engineers to **detect, analyze, and respond to unknown network threats** using LLM-powered agents, automated workflows, and modular plugins.
+---
 
-This system is ideal for environments involving **Proxmox, OPNsense, virtual labs, Wi-Fi research, honeypots, or enterprise network simulations.**
+# 📌 Project Overview
+
+Modern IT infrastructures generate thousands of alerts and log events daily.  
+Manually triaging every alert is slow, error-prone, and requires skilled engineers.
+
+This project proposes an **Autonomous Incident Triage & Remediation Agent** that processes system alerts, analyzes logs, checks server metrics, diagnoses the issue, and recommends — or performs — automated remediation steps.
+
+It is fully aligned with Kaggle’s Agents Intensive Capstone requirements, demonstrating:
+
+- Tool calling  
+- Multi-step agent planning  
+- RAG over logs  
+- Modular agent architecture  
+- AI-powered reasoning  
+- Clear documentation & maintainability  
 
 ---
 
 # 🎯 Problem Statement
 
-Modern network environments—including homelabs—frequently encounter:
+IT operations teams face challenges:
 
-* Unknown inbound traffic
-* Port scans, brute-force attempts, malware callbacks
-* Lateral movement inside LAN/SDN
-* Misconfiguration-based vulnerabilities
-* Lack of real-time, automated analysis
+- Too many alerts from monitoring systems  
+- Logs are unclear or spread across systems  
+- Diagnosing root cause requires manual log analysis  
+- Triage takes time and delays recovery  
+- Repetitive tasks waste engineer productivity  
 
-Traditional tools such as firewalls and SIEMs **alert**, but they do not **intelligently analyze or autonomously act** without manual intervention.
-
----
-
-# 💡 Solution Statement
-
-ATD-Agent introduces an **autonomous, multi-agent AI system** that:
-
-* Monitors inbound logs/traffic from OPNsense, Proxmox, or Linux hosts
-* Detects anomalies using LLM-enhanced reasoning
-* Automatically investigates unknown behaviors
-* Suggests or executes mitigation actions
-* Summarizes incidents into professional SOC-style reports
-
-The system integrates seamlessly with CLI tools, third-party APIs, honeypots, and alerting channels such as email, Discord, or Telegram.
+This leads to **increased downtime**, **higher operational cost**, and **alert fatigue**.
 
 ---
 
-# 🧱 Architecture
+# 🤖 Solution Statement
 
-The project uses a structured, agent-based approach with integrated toolchains.
+The **Autonomous Incident Triage Agent** solves these challenges by:
+
+### ✔ Reading alerts  
+Extracts key fields: service, severity, time, context.
+
+### ✔ Performing RAG on logs  
+Searches log snippets related to the alert.
+
+### ✔ Fetching system metrics  
+Queries CPU, RAM, Disk, Network, Service state  
+(Mocked Proxmox/VM APIs included)
+
+### ✔ LLM-based root cause analysis  
+The agent reasons over:
+
+- Logs  
+- Metrics  
+- Historical patterns  
+
+And generates:
+
+- Diagnosis  
+- Explanation  
+- Possible remediation  
+
+### ✔ Optional auto-remediation  
+Simulated actions include:
+
+- Restarting services  
+- Clearing cache  
+- Regenerating config  
+- Rebooting VM  
+
+### ✔ Generates a Markdown incident report  
+Includes alert summary, logs, metrics, root cause, and recommended actions.
+
+---
+
+# 🏗️ Architecture
+
+<p align="center">
+  <img src="assets/flow_adk_web.png"/>
+</p>
+
+<p align="center">
+  <img src="assets/architecture.png"/>
+</p>
+
+### **Components:**
+- **Alert Parser** – receives the incident  
+- **Log Tool** – provides RAG snippets  
+- **Metrics Tool** – fetches system health  
+- **LLM Reasoner** – diagnoses & recommends  
+- **Action Tool** – performs safe actions  
+- **Planner** – multi-step workflow orchestration  
+- **Reporter** – builds the final report  
+
+---
+
+# ✍️ Content Strategist
+
+This project communicates:
+
+- High business value  
+- Technical clarity  
+- Strong use of AI agents  
+- Realistic enterprise IT use-case  
+
+It is crafted for both **Kaggle judges** and **engineering teams**.
+
+---
+
+# 🧾 Technical Writer
+
+Documentation includes:
+
+- Clear problem framing  
+- Step-by-step architecture explanation  
+- Code structure  
+- Setup instructions  
+- Diagrams & images  
+- Example workflow  
+
+---
+
+# 🔧 Essential Tools & Utilities
+
+| Tool / Module | Purpose |
+|---------------|---------|
+| **log_tool.py** | Provide log context + RAG |
+| **metrics_tool.py** | Fetch system metrics |
+| **action_tool.py** | Perform simulated remediation |
+| **planner.py** | Multi-step workflow |
+| **executor.py** | Main agent runner |
+| **llm_client_mock.py** | No-API demo reasoning |
+| **llm_client_gemini.py** | Gemini integration template |
+| **sample_data.py** | Demo alerts + logs |
+
+---
+
+# 💡 Value Statement
+
+The agent delivers:
+
+- Faster incident response  
+- Reduced downtime  
+- Automated triage  
+- Actionable root cause summaries  
+- Lower operational load on IT teams  
+
+In enterprise operations, even a **5-minute faster diagnosis** saves thousands of dollars.
+
+---
+
+# 📁 Project Structure
 
 ```
-                   ┌──────────────────────────┐
-                   │  OPNsense / Firewall      │
-                   │  Logs / Alerts / Events   │
-                   └─────────────┬─────────────┘
-                                 │
-                                 ▼
-                     flow_adk_web.png (your diagram)
-                                 │
-                                 ▼
-             ┌────────────────────────────────────────┐
-             │         ATD Agent Controller           │
-             │  - Task Scheduler                      │
-             │  - Incident Orchestrator               │
-             │  - Tool Manager                        │
-             └───────────────┬────────────────────────┘
-                             │
-    ┌────────────────────────┼──────────────────────────┐
-    ▼                        ▼                          ▼
-Detection Agent      Investigation Agent      Action/Response Agent
-- Traffic patterns   - Forensic analysis      - Firewall updates  
-- Anomaly scoring    - CVE lookup             - Network isolation  
-- Log parsing        - Behavior mapping       - Alerting mechanisms  
-```
-<img width="1536" height="1024" alt="flow_adk_web" src="https://github.com/user-attachments/assets/28476a68-015b-4614-bcd4-5c3bc0b98ccc" />
 
----
-
-# 🧩 Content Strategist
-
-This project includes curated content development for:
-
-* Threat-analysis reporting
-* SOC-level incident summaries
-* Documentation generation via LLM
-* Structured JSON outputs for dashboards
-
----
-
-# ✍️ Technical Writer
-
-The system auto-generates:
-
-* Incident summaries
-* Threat intelligence briefs
-* Markdown technical reports
-* Automated changelogs
-
----
-
-# 🛠 Essential Tools and Utilities
-
-The project integrates with:
-
-* **Python** (core orchestrator)
-* **LLM APIs** (OpenAI / local models)
-* **Log parsing modules**
-* **Network CLI Tools** (nmap, tcpdump, ufw/pf)
-* **Alerting Services** (Telegram/Discord/email)
-* **Visualization Tools** (for future Grafana dashboards)
-
----
-
-# 🗂 Project Structure
-
-```
 agents-capstone/
 │
-├── agents/
-│   ├── detection_agent.py
-│   ├── investigation_agent.py
-│   ├── response_agent.py
+├── README.md
+├── requirements.txt
+├── kaggle_notebook.ipynb
 │
-├── tools/
-│   ├── log_parser.py
-│   ├── firewall_manager.py
-│   ├── threat_intel.py
+├── assets/
+│   ├── thumbnail.png
+│   ├── architecture.png
+│   └── flow_adk_web.png
 │
 ├── data/
-│   ├── samples/
+│   ├── sample_alerts.json
+│   └── sample_logs.txt
 │
-├── configs/
-│   └── settings.yaml
+├── src/
+│   ├── agent/
+│   │   ├── planner.py
+│   │   └── executor.py
+│   │
+│   ├── tools/
+│   │   ├── log_tool.py
+│   │   ├── metrics_tool.py
+│   │   └── action_tool.py
+│   │
+│   ├── llm/
+│   │   ├── llm_client_mock.py
+│   │   └── llm_client_gemini.py
+│   │
+│   └── utils/
+│       └── sample_data.py
 │
-├── flow_adk_web.png
-├── thumbnail.png
-└── README.md
-```
+└── tests/
+└── test_tools.py
+
+````
 
 ---
 
 # ⚙️ Installation
 
-### **1. Clone the repository**
-
 ```bash
 git clone https://github.com/<your-username>/agents-capstone.git
 cd agents-capstone
-```
-
-### **2. Create a virtual environment**
-
-```bash
-python3 -m venv venv
-source venv/bin/activate  # Linux / macOS
-venv\Scripts\activate     # Windows
-```
-
-### **3. Install dependencies**
-
-```bash
 pip install -r requirements.txt
-```
-
-### **4. Configure API keys & Settings**
-
-Edit the configuration file:
-
-```
-configs/settings.yaml
-```
-
-Add your:
-
-* OpenAI API key
-* Logging paths
-* Notification settings
-* Firewall mode (dry-run or live)
+````
 
 ---
 
-# 🔄 Workflow
+# ▶️ Running the Workflow
 
-1. Logs or firewall events are fed into the system
-2. Detection Agent identifies anomalies
-3. Investigation Agent performs extended threat analysis
-4. Response Agent takes safe automated actions (optional)
-5. A SOC-style report is generated
+### **Run main agent**
+
+```bash
+python src/agent/executor.py
+```
+
+### **Run Kaggle Notebook**
+
+Open:
+
+```
+kaggle_notebook.ipynb
+```
 
 ---
 
-# 📌 Value Statement
+# 🔄 Workflow Summary
 
-This project provides a **fully autonomous AI security analyst** that reduces manual workload by:
-
-* Automating threat detection
-* Streamlining investigation
-* Producing professional-grade reports
-* Optionally enforcing protective actions
-
-It is a **powerful, modern, AI-enhanced SOC system** designed for both homelabs and enterprise sandboxes.
+1. Alert received
+2. Logs fetched (RAG)
+3. Metrics fetched
+4. LLM analyses + diagnosis
+5. Optional auto-remediation
+6. Final report generated
 
 ---
 
 # 🏁 Conclusion
 
-The Autonomous Threat Detection & Response Agent is your intelligent security companion—capable of analyzing, reporting, and responding to threats in real time.
+This project demonstrates a **complete agent system** following the Kaggle Agents Intensive curriculum, providing:
+
+* Real-world IT automation
+* Strong architecture
+* Multi-step reasoning
+* Clean codebase
+* Deployment-ready patterns
+* High-quality documentation
+
 
