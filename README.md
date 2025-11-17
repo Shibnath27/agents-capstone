@@ -85,7 +85,7 @@ Includes alert summary, logs, metrics, root cause, and recommended actions.
 # 🏗️ Architecture
 
 <p align="center">
-  <img src="assets/flow_adk_web.png"/>
+  <img src="/flow_adk_web.png"/>
 </p>
 
 <p align="center">
@@ -169,9 +169,8 @@ agents-capstone/
 ├── kaggle_notebook.ipynb
 │
 ├── assets/
-│   ├── thumbnail.png
 │   ├── architecture.png
-│   └── flow_adk_web.png
+│   
 │
 ├── data/
 │   ├── sample_alerts.json
@@ -194,9 +193,11 @@ agents-capstone/
 │   └── utils/
 │       └── sample_data.py
 │
-└── tests/
-└── test_tools.py
-
+├── tests/
+|    └── test_tools.py
+|
+├── flow_adk_web.png
+└── thumbnail.png
 ````
 
 ---
