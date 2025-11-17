@@ -1,0 +1,9 @@
+openai>=0.28.0
+langchain>=0.0.300
+tqdm
+pytest
+python-dotenv
+requests
+faiss-cpu
+sentence-transformers
+matplotlib
